@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>Sampson & Sharyn 的晚安收尾官</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&family=Noto+Serif+SC:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+:root{
+  --bg:#0a0810;--bg2:#151020;--bg3:#1a1535;
+  --glass:rgba(155,142,196,.1);--glass2:rgba(155,142,196,.06);--gb:rgba(155,142,196,.15);--gb2:rgba(155,142,196,.1);
+  --t1:#f0eaf5;--t2:#ddd8eb;--t3:#bbb1d7;--t4:#9b8ec4;--t5:#7c6fa0;--t6:#5e527d;
+  --cream:#f5e6d3;--rose:#e8c4c4;--gold:#d4c5a9;
+  --glow:rgba(155,142,196,.3);--glow2:rgba(155,142,196,.15);
+  --r:20px;--r2:16px;--r3:12px;
+  --font:'Noto Sans SC',system-ui,sans-serif;--serif:'Noto Serif SC',Georgia,serif;
+}
+html,body{width:100%;min-height:100dvh;overflow-x:hidden;font-family:var(--font);background:linear-gradient(135deg,var(--bg),var(--bg2) 30%,var(--bg3) 60%,#202040);color:var(--t1);-webkit-font-smoothing:antialiased}
+body{padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left)}
+::-webkit-scrollbar{width:3px;height:3px}::-webkit-scrollbar-thumb{background:rgba(155,142,196,.3);border-radius:3px}::-webkit-scrollbar-track{background:transparent}
+#stars{position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden}
+.star{position:absolute;width:2px;height:2px;background:rgba(255,255,255,.6);border-radius:50%;animation:tw var(--d,3s) ease-in-out infinite var(--dl,0s)}
+.star.lg{width:3px;height:3px;background:rgba(212,197,169,.7);box-shadow:0 0 6px rgba(212,197,169,.4)}
+.moon-glow{position:absolute;width:300px;height:300px;top:-50px;right:-50px;background:radial-gradient(circle,rgba(212,197,169,.4),rgba(155,142,196,.1) 40%,transparent 70%);filter:blur(40px);opacity:.2;border-radius:50%}
+.btm-fade{position:absolute;bottom:0;left:0;right:0;height:150px;background:linear-gradient(to top,rgba(10,8,16,.8),transparent)}
+@keyframes tw{0%,100%{opacity:.15;transform:scale(.8)}50%{opacity:1;transform:scale(1.2)}}
+@keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+@keyframes breathe{0%,100%{opacity:.6}50%{opacity:1}}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+@keyframes pulse{0%,100%{transform:scale(1);opacity:.6}50%{transform:scale(1.08);opacity:1}}
+@keyframes pop{0%{transform:scale(0);opacity:0}60%{transform:scale(1.15)}100%{transform:scale(1);opacity:1}}
+@keyframes shake{0%,100%{transform:translateX(0) rotate(0)}20%{transform:translateX(-3px) rotate(-2deg)}40%{transform:translateX(3px) rotate(2deg)}60%{transform:translateX(-2px) rotate(-1deg)}80%{transform:translateX(2px) rotate(1deg)}}
+@keyframes boxShake{0%,100%{transform:rotate(0)}25%{transform:rotate(-3deg) scale(1.02)}75%{transform:rotate(3deg) scale(1.02)}}
+@keyframes countP{0%{transform:scale(.3);opacity:0}50%{transform:scale(1.15);opacity:1}100%{transform:scale(1);opacity:1}}
+@keyframes diceSlot{0%{transform:translateY(-200%);opacity:0}70%{transform:translateY(8%)}100%{transform:translateY(0);opacity:1}}
+@keyframes unfurl{from{max-height:0;opacity:0;padding-top:0;padding-bottom:0}to{max-height:500px;opacity:1}}
+@keyframes starBurst{0%{transform:translate(0,0) scale(1);opacity:0}15%{opacity:1}100%{transform:translate(var(--sx),var(--sy)) scale(0);opacity:0}}
+#app{position:relative;z-index:1;min-height:100dvh;max-width:420px;margin:0 auto}
+.scr{min-height:100dvh;display:flex;flex-direction:column;padding:16px 20px 32px;animation:fadeUp .5s ease forwards}
+.card{background:linear-gradient(145deg,rgba(155,142,196,.12),rgba(139,164,196,.08) 50%,rgba(155,142,196,.05));backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border:1px solid var(--gb);border-radius:var(--r);box-shadow:0 8px 32px rgba(0,0,0,.3),inset 0 1px 0 rgba(255,255,255,.05)}
+.card-s{background:linear-gradient(145deg,rgba(155,142,196,.08),rgba(139,164,196,.05));backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border:1px solid var(--gb2);border-radius:var(--r2);box-shadow:0 4px 16px rgba(0,0,0,.2)}
+.btn{position:relative;background:linear-gradient(135deg,rgba(155,142,196,.3),rgba(139,164,196,.2));border:1px solid rgba(155,142,196,.3);border-radius:var(--r2);padding:14px 24px;color:var(--t1);font-size:15px;font-weight:500;font-family:var(--font);cursor:pointer;transition:all .3s;display:flex;align-items:center;justify-content:center;gap:8px;width:100%;outline:none;user-select:none}
+.btn:active{transform:scale(.97);box-shadow:0 0 20px var(--glow)}
+.btn:disabled{opacity:.4;cursor:not-allowed;transform:none!important}
+.btn-p{background:linear-gradient(135deg,rgba(155,142,196,.5),rgba(124,111,160,.4));border-color:rgba(155,142,196,.4);box-shadow:0 4px 20px rgba(155,142,196,.2),inset 0 1px 0 rgba(255,255,255,.1)}
+.btn-sm{padding:10px 16px;font-size:13px;border-radius:var(--r3)}
+.tag{display:inline-block;font-size:10px;padding:2px 8px;border-radius:20px;background:rgba(155,142,196,.12);border:1px solid rgba(155,142,196,.15);color:var(--t3)}
+.dvd{width:40px;height:1px;background:linear-gradient(to right,transparent,rgba(212,197,169,.4),transparent);margin:12px auto}
+.pbar{display:flex;align-items:center;gap:8px;margin-bottom:12px;padding:14px 16px}
+.pav{position:relative;width:46px;height:46px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;font-family:var(--serif);font-weight:600;transition:all .5s;flex-shrink:0}
+.pav .dot{position:absolute;bottom:-1px;right:-1px;width:11px;height:11px;border-radius:50%;border:2px solid var(--bg2);transition:background .3s}
+.pav .chk{position:absolute;top:-2px;right:-2px;width:16px;height:16px;border-radius:50%;background:rgba(110,231,183,.15);border:1px solid rgba(110,231,183,.4);display:flex;align-items:center;justify-content:center;font-size:9px;animation:pop .3s ease}
+.plink{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px}
+.pline{width:100%;height:1px;background:linear-gradient(to right,rgba(155,142,196,.1),rgba(155,142,196,.25),rgba(155,142,196,.1));position:relative}
+.pline .ldot{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:6px;height:6px;border-radius:50%;background:var(--gold);animation:pulse 2s ease-in-out infinite}
+.pname{font-size:12px;font-weight:500}.psub{font-size:10px;color:var(--t5);margin-top:2px}
+.stxt{text-align:center;padding:6px 0;font-size:12px;color:var(--t3);opacity:.7;min-height:28px}
+.mcats{display:flex;gap:6px;overflow-x:auto;padding:4px 0 8px;-webkit-overflow-scrolling:touch;scrollbar-width:none}.mcats::-webkit-scrollbar{display:none}
+.ctab{flex-shrink:0;padding:6px 14px;border-radius:20px;font-size:11px;color:var(--t4);background:rgba(155,142,196,.06);border:1px solid transparent;cursor:pointer;font-family:var(--font);transition:all .3s;outline:none;user-select:none}
+.ctab.on{background:rgba(155,142,196,.18);border-color:rgba(155,142,196,.3);color:var(--cream)}
+.mscr{display:flex;gap:10px;overflow-x:auto;padding:8px 0 12px;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;scrollbar-width:none}.mscr::-webkit-scrollbar{display:none}
+.mc{flex:0 0 130px;scroll-snap-align:start;padding:16px 12px;border-radius:var(--r2);cursor:pointer;transition:all .3s;text-align:center;border:1px solid transparent;user-select:none;background:var(--glass2);border-color:var(--gb2)}
+.mc.on{background:var(--glass);border-color:rgba(155,142,196,.35);box-shadow:0 0 15px var(--glow2)}
+.mc i{font-size:24px;display:block;margin-bottom:8px;font-style:normal}
+.mc b{font-size:13px;font-weight:500;color:var(--cream);display:block;margin-bottom:4px}
+.mc em{font-size:10px;color:var(--t5);line-height:1.4;display:block;font-style:normal}
+.garea{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:280px}
+.gtit{font-family:var(--serif);font-size:16px;color:var(--cream);text-align:center;margin-bottom:20px}
+.rcard{width:100%;max-width:340px;padding:28px 20px;text-align:center;position:relative;overflow:hidden}
+.rglow{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:200px;height:200px;background:radial-gradient(circle,rgba(155,142,196,.2),rgba(212,197,169,.1) 40%,transparent 70%);border-radius:50%;animation:breathe 4s ease-in-out infinite}
+.rav{width:68px;height:68px;border-radius:50%;margin:0 auto 12px;display:flex;align-items:center;justify-content:center;font-size:20px;font-family:var(--serif);font-weight:700;border:2px solid rgba(212,197,169,.3);box-shadow:0 0 24px var(--glow2);animation:pop .5s ease}
+.rlbl{font-size:11px;color:var(--t4);opacity:.6;margin-bottom:4px}
+.rnam{font-family:var(--serif);font-size:24px;color:var(--cream);margin-bottom:8px}
+.rdsc{font-size:13px;color:var(--t3);line-height:1.6;opacity:.8;margin-bottom:16px}
+.rext{padding:12px 16px;border-radius:var(--r3);margin-bottom:10px;text-align:center}
+.rext .el{font-size:10px;color:var(--gold);opacity:.6;margin-bottom:3px}
+.rext .ev{font-size:12px;color:var(--cream);opacity:.8}
+.regg{margin:10px auto;padding:8px 16px;border-radius:20px;background:linear-gradient(135deg,rgba(212,197,169,.1),rgba(155,142,196,.1));border:1px solid rgba(212,197,169,.2);font-size:11px;color:var(--gold);text-align:center;animation:fadeIn .8s ease}
+.acts{width:100%;max-width:340px;display:flex;flex-direction:column;gap:10px;margin-top:20px}
+.wwrap{position:relative;width:260px;height:260px;margin:0 auto 16px}
+.wcv{width:260px;height:260px;border-radius:50%;transition:transform 4s cubic-bezier(.17,.67,.12,.99);box-shadow:0 0 40px var(--glow),inset 0 0 20px rgba(0,0,0,.3)}
+.wptr{position:absolute;top:-10px;left:50%;transform:translateX(-50%);z-index:2;width:0;height:0;border-left:10px solid transparent;border-right:10px solid transparent;border-top:20px solid var(--gold);filter:drop-shadow(0 2px 4px rgba(0,0,0,.4))}
+.fcon{perspective:800px;margin:0 auto}
+.finn{width:200px;height:280px;position:relative;transition:transform .8s cubic-bezier(.4,0,.2,1);transform-style:preserve-3d}
+.finn.flip{transform:rotateY(180deg)}
+.fface{position:absolute;inset:0;backface-visibility:hidden;border-radius:var(--r2);overflow:hidden}
+.fback{transform:rotateY(180deg)}
+.cback{background:linear-gradient(135deg,rgba(155,142,196,.4),rgba(21,16,32,.8) 50%,rgba(139,164,196,.3));border:1px solid rgba(155,142,196,.25);display:flex;align-items:center;justify-content:center;flex-direction:column}
+.cfrnt{background:linear-gradient(145deg,rgba(21,16,32,.95),rgba(30,25,50,.95),rgba(21,16,32,.95));border:1px solid rgba(155,142,196,.35);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px;box-shadow:0 8px 32px rgba(0,0,0,.5),0 0 30px var(--glow2)}
+.qopts{display:grid;grid-template-columns:1fr 1fr;gap:10px;width:100%;max-width:300px;margin:16px auto}
+.qo{padding:14px 10px;border-radius:var(--r3);font-size:13px;text-align:center;cursor:pointer;transition:all .3s;border:1px solid var(--gb2);background:var(--glass2);color:var(--t2);user-select:none}
+.qo:active,.qo.sel{background:var(--glass);border-color:rgba(155,142,196,.4);color:var(--cream);box-shadow:0 0 12px var(--glow2)}
+.qo.dis{opacity:.5;pointer-events:none}
+.qrev{display:flex;gap:14px;width:100%;max-width:300px;margin:16px auto}
+.qa{flex:1;padding:14px 10px;border-radius:var(--r3);text-align:center;animation:pop .4s ease}
+.qa .qr{font-size:10px;color:var(--t5);margin-bottom:6px}
+.qa .qv{font-size:15px;font-weight:500;color:var(--cream)}
+.qm{text-align:center;margin-top:10px;font-size:14px;animation:pop .5s ease .3s both}
+.darea{display:flex;gap:20px;justify-content:center;align-items:center;margin:16px 0}
+.dbox{width:100px;height:100px;border-radius:var(--r3);display:flex;align-items:center;justify-content:center;text-align:center;padding:8px;overflow:hidden;border:2px solid rgba(155,142,196,.2)}
+.dbox.roll .dv{animation:diceSlot .6s ease-out forwards}
+.dv{font-size:14px;font-weight:500;color:var(--cream);line-height:1.3}
+.dlbl{font-size:10px;color:var(--t5);text-align:center;margin-top:6px}
+.bwrap{width:140px;height:140px;margin:0 auto 16px;position:relative}
+.bbox{width:100%;height:100%;border-radius:var(--r3);display:flex;align-items:center;justify-content:center;font-size:36px;border:2px solid rgba(155,142,196,.25);transition:all .3s;background:linear-gradient(135deg,rgba(212,197,169,.06),rgba(155,142,196,.1))}
+.bbox.shk{animation:boxShake .2s ease infinite}
+.bbox.opn{border-color:var(--gold);box-shadow:0 0 30px rgba(212,197,169,.2)}
+.brev{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:6px;border-radius:var(--r3);opacity:0;transform:scale(.8);transition:all .5s;background:linear-gradient(135deg,rgba(21,16,32,.95),rgba(30,25,50,.95));border:1px solid rgba(155,142,196,.3);padding:12px;text-align:center}
+.brev.show{opacity:1;transform:scale(1)}
+.scard{width:100%;max-width:300px;margin:0 auto;overflow:hidden}
+.sscrl{padding:24px 20px;border-radius:var(--r);border:1px solid rgba(212,197,169,.2);background:linear-gradient(145deg,rgba(21,16,32,.9),rgba(30,25,50,.85));position:relative}
+.stit{font-family:var(--serif);font-size:20px;color:var(--gold);margin-bottom:10px;text-align:center}
+.sbod{font-size:13px;color:var(--t3);line-height:1.7;text-align:center}
+.scls{margin-top:14px;font-size:12px;color:var(--cream);text-align:center;opacity:.8}
+.tcard{width:100%;max-width:300px;margin:0 auto;padding:28px 20px;text-align:center}
+.tcard .ti{font-size:32px;margin-bottom:12px}
+.tcard .tt{font-size:14px;color:var(--cream);line-height:1.6;margin-bottom:16px}
+.scnv{width:260px;height:260px;margin:0 auto;position:relative;overflow:hidden;border-radius:50%}
+.trdot{position:absolute;width:4px;height:4px;border-radius:50%;background:var(--gold);box-shadow:0 0 6px var(--gold);animation:starBurst var(--dur,2s) ease-out forwards var(--del,0s)}
+.trcen{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:60px;height:60px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;font-family:var(--serif);color:var(--cream);border:1px solid rgba(212,197,169,.25);opacity:0;transition:all .8s}
+.trcen.show{opacity:1;box-shadow:0 0 20px rgba(212,197,169,.25)}
+.cdn{font-size:72px;font-family:var(--serif);color:var(--cream);text-align:center;animation:countP .8s ease;min-height:90px;display:flex;align-items:center;justify-content:center}
+.cdl{font-size:13px;color:var(--t4);text-align:center;margin-top:8px}
+.cdp{width:110px;height:110px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:600;color:var(--cream);margin:20px auto;cursor:pointer;transition:all .2s;animation:pulse 1s ease-in-out infinite;border:2px solid rgba(155,142,196,.4);user-select:none;background:linear-gradient(135deg,rgba(155,142,196,.3),rgba(124,111,160,.25))}
+.cdp:active{transform:scale(.9);box-shadow:0 0 30px var(--glow);animation:none}
+.fsts{display:flex;align-items:center;gap:16px;width:100%;max-width:300px;margin:0 auto 14px;padding:20px;text-align:center}
+.fsts .fn{font-family:var(--serif);font-size:28px;margin-bottom:4px}
+.fsts .fl{font-size:11px;color:var(--t5)}
+.fbar{width:100%;max-width:300px;height:8px;border-radius:4px;background:rgba(155,142,196,.1);margin:0 auto 8px;overflow:hidden}
+.ffill{height:100%;border-radius:4px;background:linear-gradient(to right,rgba(245,230,211,.6),rgba(155,142,196,.4));transition:width 1s ease}
+.he{display:flex;align-items:center;gap:12px;padding:14px 16px;margin-bottom:8px}
+.hav{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;font-family:var(--serif);flex-shrink:0}
+.hi{flex:1;min-width:0}
+.hn{font-size:13px;color:var(--cream)}
+.hm{display:flex;gap:8px;margin-top:3px;flex-wrap:wrap}
+.hm span{font-size:10px;color:var(--t5)}
+.hd{font-size:10px;color:var(--t6);flex-shrink:0}
+.bdg{display:inline-flex;align-items:center;gap:6px;padding:8px 12px;border-radius:var(--r3);margin:4px;font-size:11px}
+.bdg-i{font-size:16px}
+.bdg-n{color:var(--cream)}
+.bdg-d{color:var(--t5);font-size:10px}
+.mbg{position:fixed;inset:0;z-index:50;display:flex;align-items:center;justify-content:center;padding:24px;animation:fadeIn .2s ease}
+.mov{position:absolute;inset:0;background:rgba(0,0,0,.6);backdrop-filter:blur(4px)}
+.mbox{position:relative;z-index:1;width:100%;max-width:320px;padding:28px 24px;animation:fadeUp .3s ease}
+.mbox h3{font-family:var(--serif);font-size:18px;color:var(--cream);text-align:center;margin-bottom:6px}
+.mbox p{font-size:12px;color:var(--t4);text-align:center;margin-bottom:16px;opacity:.6}
+.mbox input{width:100%;padding:12px;border-radius:var(--r3);background:rgba(21,16,32,.6);border:1px solid rgba(155,142,196,.2);text-align:center;font-size:20px;color:var(--cream);letter-spacing:.3em;outline:none;font-family:var(--font)}
+.mbox input::placeholder{font-size:13px;letter-spacing:normal;color:var(--t6)}
+.mbox input:focus{border-color:rgba(155,142,196,.4)}
+.etxt{font-size:12px;color:var(--rose);text-align:center;margin-top:8px;animation:fadeIn .3s}
+.ltxt{font-size:12px;color:var(--t4);text-align:center;margin-top:8px;animation:breathe 2s ease-in-out infinite}
+.abg{display:inline-block;padding:2px 8px;border-radius:10px;font-size:10px}
+.abg-y{background:rgba(110,231,183,.1);border:1px solid rgba(110,231,183,.2);color:rgba(110,231,183,.8);animation:pop .3s ease}
+.abg-w{background:rgba(155,142,196,.08);border:1px solid rgba(155,142,196,.15);color:var(--t5);animation:breathe 2s ease-in-out infinite}
+</style>
+</head>
+<body>
+<div id="stars"></div>
+<div id="app"></div>
+<script src="/socket.io/socket.io.js"></script>
+<script>
+/* =============== CONFIG =============== */
+const MODES={
+  wheel:{n:'命运转盘',ic:'🎡',d:'让命运温柔地转动',cat:'random'},
+  card:{n:'晚安抽卡',ic:'✨',d:'翻开今晚的那张牌',cat:'random'},
+  fair:{n:'公平轮值',ic:'⚖️',d:'让公平守护想念',cat:'fair'},
+  quiz:{n:'默契测试',ic:'💕',d:'今晚你有多懂我',cat:'sync'},
+  dice:{n:'晚安骰子',ic:'🎲',d:'双骰落定温柔',cat:'random'},
+  story:{n:'剧情签',ic:'📜',d:'抽一张今晚的故事',cat:'vibe'},
+  task:{n:'心动任务',ic:'💌',d:'完成甜蜜小任务',cat:'task'},
+  blindbox:{n:'晚安盲盒',ic:'🎁',d:'拆开今晚的惊喜',cat:'random'},
+  startrail:{n:'星轨许愿',ic:'🌠',d:'星河中寻找答案',cat:'vibe'},
+  countdown:{n:'默契倒数',ic:'⏱️',d:'用默契决定今晚',cat:'sync'},
+};
+const CATS=[{id:'all',n:'全部'},{id:'random',n:'随机'},{id:'sync',n:'默契'},{id:'vibe',n:'氛围'},{id:'fair',n:'公平'},{id:'task',n:'任务'}];
+const DP=['Sampson','Sharyn','加时2分钟','Sampson','Sharyn','重投一次'];
+const DA=['立即收尾','说晚安暗号后收尾','飞吻后收尾','倒数5秒后收尾','交换最想说的话后收尾','晚安称呼后收尾'];
+const WS=[{t:'Sampson 收尾',c:'rgba(155,142,196,.35)'},{t:'Sharyn 收尾',c:'rgba(139,164,196,.25)'},{t:'加时3分钟\nSampson收尾',c:'rgba(155,142,196,.2)'},{t:'加时5分钟\nSharyn收尾',c:'rgba(139,164,196,.35)'},{t:'晚安暗号\nSampson收尾',c:'rgba(155,142,196,.25)'},{t:'舍不得的话\nSharyn收尾',c:'rgba(139,164,196,.2)'}];
+const ACHVS={first_sync:{n:'默契初现',d:'首次答案一致',ic:'💫'},favor:{n:'今晚偏爱你',d:'首次触发偏爱',ic:'💝'},collector_7:{n:'夜晚收藏家',d:'累计使用7次',ic:'🌙'},overtime_3:{n:'不舍得专家',d:'连续3次加时',ic:'⏰'},guardian_10:{n:'月光守护员',d:'累计收尾10次',ic:'🛡️'},blindbox_5:{n:'盲盒达人',d:'开启5次盲盒',ic:'🎁'},perfect_sync:{n:'完美同步',d:'倒数差距<0.5s',ic:'✨'},all_modes:{n:'全能探索家',d:'尝试所有玩法',ic:'🗺️'}};
+function rn(r){return r==='sampson'?'Sampson':'Sharyn'}
+function or(r){return r==='sampson'?'sharyn':'sampson'}
+
+/* =============== STATE =============== */
+const S={screen:'home',connected:false,rs:null,me:null,starting:false,result:null,anim:false,catF:'all',cdT:null,cdV:null,cdR:false,qc:null,modal:null,jid:'',loading:false,err:''};
+let sk;
+
+/* =============== DOM =============== */
+const $=s=>document.querySelector(s);
+function genStars(){const c=$('#stars');let h='';for(let i=0;i<60;i++){const x=Math.random()*100,y=Math.random()*100,lg=Math.random()>.85;h+=`<div class="star${lg?' lg':''}" style="left:${x}%;top:${y}%;--d:${2+Math.random()*4}s;--dl:${Math.random()*5}s"></div>`;}h+='<div class="moon-glow"></div><div class="btm-fade"></div>';c.innerHTML=h;}
+
+/* =============== SOCKET =============== */
+function initSk(){
+  sk=io(location.origin,{transports:['websocket','polling'],reconnection:true,reconnectionAttempts:20,reconnectionDelay:1000,timeout:10000});
+  sk.on('connect',()=>{S.connected=true;upd();const sr=sessionStorage.getItem('gc_r'),sl=sessionStorage.getItem('gc_l');if(sr&&sl){sk.emit('join_room',{roomId:sr,role:sl},(d)=>{if(d.success&&d.state){S.rs=d.state;S.me=sl;S.screen='room';rdr();}else{sessionStorage.removeItem('gc_r');sessionStorage.removeItem('gc_l');}});}});
+  sk.on('disconnect',()=>{S.connected=false;upd();});
+  sk.on('room_state',(st)=>{const op=S.rs?.phase;S.rs=st;if(st.phase==='result'&&st.result)S.result=st.result;if(op!==st.phase){if(st.phase==='answering'&&st.selectedMode==='countdown')startCd();if(st.phase==='result'||st.phase==='both_joined'){S.anim=false;S.starting=false;}}upd();});
+  sk.on('game_starting',()=>{S.starting=true;S.result=null;S.anim=true;upd();});
+  sk.on('game_result',(d)=>{S.result=d.result;S.starting=false;const m=S.rs?.selectedMode;const dl=m==='wheel'?4500:m==='card'?2500:m==='startrail'?3000:m==='blindbox'?2000:1500;setTimeout(()=>{S.anim=false;upd();},dl);upd();});
+  sk.on('game_reset',()=>{S.starting=false;S.result=null;S.anim=false;S.qc=null;S.cdR=false;clrCd();upd();});
+  sk.on('answers_revealed',()=>upd());
+  sk.on('player_answered',()=>upd());
+  sk.on('room_expired',()=>{S.rs=null;S.me=null;S.screen='home';sessionStorage.removeItem('gc_r');sessionStorage.removeItem('gc_l');rdr();});
+}
+function startCd(){clrCd();S.cdV=5;S.cdR=false;S.cdT=setInterval(()=>{S.cdV--;if(S.cdV<=0){clearInterval(S.cdT);S.cdT=null;S.cdR=true;}upd();},1000);}
+function clrCd(){if(S.cdT){clearInterval(S.cdT);S.cdT=null;}S.cdV=null;S.cdR=false;}
+
+/* =============== ACTIONS =============== */
+function doCr(role){if(!S.connected)return;S.loading=true;S.err='';upd();sk.emit('create_room',(d)=>{sk.emit('join_room',{roomId:d.roomId,role},(r)=>{S.loading=false;if(r.success){S.rs=r.state;S.me=role;S.screen='room';S.modal=null;sessionStorage.setItem('gc_r',d.roomId);sessionStorage.setItem('gc_l',role);rdr();}else{S.err=r.error||'创建失败';upd();}});});}
+function doJn(role){const id=S.jid.trim();if(!id){S.err='请输入房间号';upd();return;}S.loading=true;S.err='';upd();sk.emit('join_room',{roomId:id,role},(r)=>{S.loading=false;if(r.success){S.rs=r.state;S.me=role;S.screen='room';S.modal=null;sessionStorage.setItem('gc_r',id);sessionStorage.setItem('gc_l',role);rdr();}else{S.err=r.error||'加入失败';upd();}});}
+function doSM(m){sk.emit('select_mode',{mode:m});}
+function doRdy(){sk.emit('toggle_ready');}
+function doSt(){sk.emit('start_game');}
+function doAns(a){S.qc=a;sk.emit('submit_answer',{answer:a});upd();}
+function doCdP(){sk.emit('countdown_press');}
+function doRst(){S.qc=null;S.cdR=false;clrCd();sk.emit('reset_game');}
+function doLv(){sk.emit('leave_room');S.rs=null;S.me=null;S.starting=false;S.result=null;S.anim=false;S.qc=null;clrCd();sessionStorage.removeItem('gc_r');sessionStorage.removeItem('gc_l');S.screen='home';rdr();}
+
+/* =============== RENDER =============== */
+function rdr(){$('#app').innerHTML=S.screen==='home'?scrHome():S.screen==='room'?scrRoom():scrHist();ardr();}
+function upd(){
+  if(S.screen==='room'&&S.rs){
+    const pb=$('#pb');if(pb)pb.innerHTML=pbarI();
+    const st=$('#st');if(st)st.innerHTML=stTxt();
+    const ga=$('#ga');
+    if(ga&&!S.anim){const ph=S.rs.phase;const c=(ph==='playing'||S.starting||S.anim||ph==='answering'||ph==='result')?gaC():(ph==='waiting'?waitC():'');if(c)ga.innerHTML=c;ardr();}
+    const ms=$('#ms');
+    if(ms&&!S.anim&&!S.starting&&!['playing','answering','result'].includes(S.rs.phase))ms.innerHTML=msI();
+    return;
+  }
+  rdr();
+}
+function ardr(){
+  if(S.screen!=='room'||!S.rs)return;
+  const m=S.rs.selectedMode;
+  if(m==='wheel'){const c=$('#wcv');if(c)dW(c);if(S.result?.mode==='wheel'&&S.result.wheelIndex!==undefined&&S.anim)setTimeout(()=>{const c=$('#wcv');if(c)spW(c,S.result.wheelIndex);},100);}
+  if(m==='card'&&S.result?.mode==='card'&&S.anim)setTimeout(()=>{const f=$('.finn');if(f)f.classList.add('flip');},800);
+  if(m==='startrail'&&S.starting&&!S.result)setTimeout(aStars,200);
+  if(m==='startrail'&&S.result?.mode==='startrail'&&S.anim)setTimeout(rStarC,2500);
+  if(m==='blindbox'&&S.result?.mode==='blindbox'&&S.anim){const b=$('.bbox');const r=$('.brev');if(b){b.classList.add('shk');setTimeout(()=>{b.classList.remove('shk');b.classList.add('opn');if(r)r.classList.add('show');},1200);}}
+  if(m==='dice'&&S.result?.mode==='dice'&&S.anim)setTimeout(()=>{document.querySelectorAll('.dbox').forEach(d=>d.classList.add('roll'));},200);
+}
+
+/* =============== SCREEN: HOME =============== */
+function scrHome(){
+  return `<div class="scr" style="justify-content:center;align-items:center;text-align:center">
+<div style="margin-bottom:44px">
+<h1 class="serif" style="font-size:26px;color:var(--cream);line-height:1.5;letter-spacing:.05em">今晚谁来做<br><span style="background:linear-gradient(to right,var(--t3),var(--cream),var(--t3));-webkit-background-clip:text;-webkit-text-fill-color:transparent">晚安收尾官？</span></h1>
+<p style="font-size:13px;color:var(--t3);opacity:.7;margin-top:12px;line-height:1.6">不做先结束的人<br>只做负责说最后一句晚安的人</p>
+</div>
+<div style="display:flex;align-items:center;gap:24px;margin-bottom:44px">
+<div style="text-align:center"><div class="card" style="width:52px;height:52px;display:flex;align-items:center;justify-content:center;margin:0 auto 8px;box-shadow:0 0 15px var(--glow2)"><span class="serif" style="font-size:17px;color:var(--cream)">S</span></div><span style="font-size:11px;color:var(--t3);opacity:.6">Sampson</span></div>
+<div style="display:flex;flex-direction:column;align-items:center;gap:4px"><div style="width:28px;height:1px;background:linear-gradient(to right,transparent,var(--t5),transparent)"></div><span style="font-size:11px;color:var(--t6)">&</span><div style="width:28px;height:1px;background:linear-gradient(to right,transparent,var(--t5),transparent)"></div></div>
+<div style="text-align:center"><div class="card" style="width:52px;height:52px;display:flex;align-items:center;justify-content:center;margin:0 auto 8px;box-shadow:0 0 15px var(--glow2)"><span class="serif" style="font-size:17px;color:var(--rose)">S</span></div><span style="font-size:11px;color:var(--t3);opacity:.6">Sharyn</span></div>
+</div>
+<div style="width:100%;max-width:280px;display:flex;flex-direction:column;gap:12px">
+<button class="btn btn-p" onclick="S.modal='rc';S.err='';rdr();" ${S.connected?'':'disabled'}>创建今晚的房间</button>
+<button class="btn" onclick="S.modal='ji';S.err='';S.jid='';rdr();" ${S.connected?'':'disabled'}>加入 Ta 的房间</button>
+<button style="background:none;border:none;font-size:11px;color:var(--t5);padding:8px;cursor:pointer;font-family:var(--font)" onclick="S.screen='history';rdr()">查看晚安记录</button>
+</div>
+<p style="position:fixed;bottom:24px;left:0;right:0;text-align:center;font-size:11px;color:var(--t6);opacity:.3">想念不必拉扯，让仪式替你们温柔决定</p>
+${S.modal?mModal():''}
+</div>`;}
+
+function mModal(){
+  if(S.modal==='rc'||S.modal==='rj'){
+    const ic=S.modal==='rc';
+    return `<div class="mbg"><div class="mov" onclick="S.modal=null;S.err='';rdr()"></div><div class="mbox card">
+<h3>你是谁？</h3><p>选择你的身份，另一半选另一个</p>
+<div style="display:flex;flex-direction:column;gap:10px">
+<button class="btn" onclick="${ic?'doCr':'doJn'}('sampson')" ${S.loading?'disabled':''}><span class="card-s" style="width:30px;height:30px;display:flex;align-items:center;justify-content:center;border-radius:50%;font-size:13px;color:var(--cream)">S</span>我是 Sampson</button>
+<button class="btn" onclick="${ic?'doCr':'doJn'}('sharyn')" ${S.loading?'disabled':''}><span class="card-s" style="width:30px;height:30px;display:flex;align-items:center;justify-content:center;border-radius:50%;font-size:13px;color:var(--rose)">S</span>我是 Sharyn</button>
+</div>
+${S.err?`<div class="etxt">${S.err}</div>`:''}${S.loading?'<div class="ltxt">正在准备你们的晚安空间...</div>':''}
+</div></div>`;}
+  if(S.modal==='ji'){
+    return `<div class="mbg"><div class="mov" onclick="S.modal=null;S.err='';rdr()"></div><div class="mbox card">
+<h3>加入 Ta 的房间</h3><p>输入对方分享的房间号</p>
+<input type="text" inputmode="numeric" maxlength="6" placeholder="输入6位房间号" value="${S.jid}" oninput="S.jid=this.value.replace(/\\D/g,'')">
+${S.err?`<div class="etxt">${S.err}</div>`:''}
+<button class="btn btn-p" style="margin-top:16px" onclick="S.modal='rj';S.err='';rdr();" ${S.jid.trim()?'':'disabled'}>进入这个夜晚</button>
+</div></div>`;}
+  return '';
+}
+
+/* =============== SCREEN: ROOM =============== */
+function scrRoom(){
+  const rs=S.rs;if(!rs)return '<div class="scr" style="justify-content:center;align-items:center"><p style="color:var(--t4);font-size:13px">正在寻找你们的夜晚空间...</p></div>';
+  const ph=rs.phase,ip=ph==='playing'||S.starting,ia=ph==='answering',ir=ph==='result'&&S.result;
+  return `<div class="scr">
+<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
+<button style="background:none;border:none;font-size:12px;color:var(--t4);opacity:.6;padding:4px 8px;cursor:pointer;font-family:var(--font)" onclick="doLv()">← 离开</button>
+<div style="text-align:center;font-size:12px"><span style="color:var(--t5);margin-right:4px">房间</span><span style="font-family:monospace;letter-spacing:.15em;color:var(--t2)">${rs.id}</span></div>
+<button style="background:none;border:none;font-size:12px;color:var(--t4);opacity:.6;padding:4px 8px;cursor:pointer;font-family:var(--font)" onclick="navigator.clipboard&&navigator.clipboard.writeText('${rs.id}')">分享</button>
+</div>
+<div id="pb" class="card-s pbar">${pbarI()}</div>
+<div id="st" class="stxt">${stTxt()}</div>
+${ph==='waiting'?`<div id="ga" class="garea">${waitC()}</div>`:
+  (ip||ia)?`<div id="ga" class="garea">${gaC()}</div>`:
+  ir?`<div id="ga" class="garea">${resC()}</div>`:
+  `<div id="ms">${msI()}</div><div id="ga" class="garea">${rdyA()}</div>`}
+</div>`;}
+
+function pbarI(){
+  const rs=S.rs;if(!rs)return '';const me=S.me,ot=or(me);const mp=rs.players[me],op=rs.players[ot];
+  function av(role,p,isMe){
+    const on=p?.connected,rdy=p?.ready,ans=p?.answered,clr=role==='sampson'?'var(--cream)':'var(--rose)';
+    return `<div style="display:flex;flex-direction:column;align-items:center;gap:6px">
+<div class="pav card-s" style="border:2px solid ${on?(rdy?'rgba(110,231,183,.4)':'rgba(155,142,196,.25)'):'rgba(155,142,196,.1)'}${rdy?';box-shadow:0 0 12px rgba(110,231,183,.15)':''}">
+<span style="color:${clr}">${rn(role)[0]}</span><span class="dot ${on?'dot-on':'dot-off'}"></span>${rdy?'<span class="chk">✓</span>':''}
+</div>
+<div style="text-align:center"><div class="pname" style="color:${clr}">${rn(role)}</div><div class="psub">${isMe?'(你)':''}${!on&&p?' · 离线':''}${ans&&!isMe?' · 已作答':''}</div></div>
+</div>`;}
+  const bon=mp?.connected&&op?.connected;
+  return `${av(me,mp,true)}<div class="plink"><div class="pline">${bon?'<div class="ldot"></div>':''}</div><span style="font-size:10px;color:var(--t6);opacity:.5">${bon?'同处一个夜晚':'等待连接...'}</span></div>${av(ot,op,false)}`;}
+
+function stTxt(){
+  const rs=S.rs;if(!rs||!S.me)return '';const me=S.me,ot=or(me),op=rs.players[ot],mp=rs.players[me];
+  if(op&&!op.connected)return `${rn(ot)} 暂时离开了，等${ot==='sharyn'?'她':'他'}回来`;
+  if(rs.phase==='waiting')return '等待另一半加入这个夜晚...';
+  if(rs.phase==='both_joined'&&!rs.selectedMode)return '选择一种方式，让今晚的收尾变得温柔';
+  if(rs.phase==='mode_selecting'){
+    if(!mp?.ready&&!op?.ready)return rs.modeSelectedBy&&rs.modeSelectedBy!==me?`${rn(rs.modeSelectedBy)} 选择了 ${MODES[rs.selectedMode]?.n||''}，请点击准备`:'选好模式后，点击准备';
+    if(mp?.ready&&!op?.ready)return `等待 ${rn(ot)} 准备好...`;
+    if(!mp?.ready&&op?.ready)return `${rn(ot)} 已准备好了，在等你`;}
+  if(rs.phase==='both_ready')return '双方已就绪，可以开始今晚的仪式';
+  if(rs.phase==='playing'||S.starting)return '仪式正在慢慢揭晓...';
+  if(rs.phase==='answering'){if(rs.selectedMode==='quiz')return '请各自选择你的答案';if(rs.selectedMode==='countdown')return S.cdR?'同时按下！':'准备...';}
+  return '';}
+
+function waitC(){
+  const rs=S.rs,ot=or(S.me);
+  return `<div class="card" style="padding:28px 20px;max-width:300px;margin:0 auto;text-align:center">
+<div style="width:52px;height:52px;border-radius:50%;margin:0 auto 14px;display:flex;align-items:center;justify-content:center;animation:float 6s ease-in-out infinite" class="card-s"><span style="font-size:22px">🌙</span></div>
+<p class="serif" style="font-size:15px;color:var(--cream);margin-bottom:8px">房间已准备好</p>
+<p style="font-size:12px;color:var(--t4);opacity:.6;margin-bottom:18px">把房间号 <span style="color:var(--cream);font-family:monospace;letter-spacing:.2em">${rs.id}</span> 发给 ${rn(ot)}</p>
+<button class="btn btn-sm" onclick="navigator.clipboard&&navigator.clipboard.writeText('今晚的晚安仪式已准备好～房间号：${rs.id}')">复制房间信息</button>
+</div>
+<p style="font-size:11px;color:var(--t6);opacity:.4;margin-top:18px;animation:breathe 3s ease-in-out infinite;text-align:center">等待 ${rn(ot)} 加入这个夜晚...</p>`;}
+
+/* =============== MODE SELECTOR =============== */
+function msI(){
+  const rs=S.rs;if(!rs)return '';const sel=rs.selectedMode,by=rs.modeSelectedBy,f=S.catF;
+  const mk=Object.keys(MODES).filter(k=>f==='all'||MODES[k].cat===f);
+  return `<div style="margin-bottom:8px">
+<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
+<h3 class="serif" style="font-size:15px;color:var(--cream)">选择今晚的仪式</h3>
+${by&&by!==S.me?`<span style="font-size:10px;color:var(--gold);opacity:.6">${rn(by)} 选了 ${MODES[sel]?.n||''}</span>`:''}
+</div>
+<div class="mcats">${CATS.map(c=>`<button class="ctab${f===c.id?' on':''}" onclick="S.catF='${c.id}';upd()">${c.n}</button>`).join('')}</div>
+<div class="mscr">${mk.map(k=>{const m=MODES[k];return `<div class="mc${sel===k?' on':''}" onclick="doSM('${k}')"><i>${m.ic}</i><b>${m.n}</b><em>${m.d}</em></div>`;}).join('')}</div>
+</div>`;}
+
+function rdyA(){
+  const rs=S.rs;if(!rs||!rs.selectedMode)return '';const me=S.me,ot=or(me),mr=rs.players[me]?.ready,otr=rs.players[ot]?.ready,br=mr&&otr;
+  return `<div style="width:100%;max-width:340px;margin:0 auto;display:flex;flex-direction:column;gap:10px">
+<button class="btn ${mr?'btn-p':''}" onclick="doRdy()">${mr?'已准备好 ✓':'我准备好了'}</button>
+${otr?`<p style="text-align:center;font-size:11px;color:var(--gold);opacity:.7">${rn(ot)} 已准备好</p>`:''}
+${br?`<button class="btn btn-p" style="font-size:16px;padding:16px" onclick="doSt()">开始今晚的仪式</button>`:''}
+</div>`;}
+
+/* =============== GAME AREA =============== */
+function gaC(){
+  const rs=S.rs;if(!rs)return '';const m=rs.selectedMode,ph=rs.phase;
+  if(ph==='answering'){if(m==='quiz')return gQuiz();if(m==='countdown')return gCd();}
+  if(ph==='result'&&S.result&&!S.anim)return resC();
+  if(S.starting||S.anim||ph==='playing'){
+    switch(m){
+      case 'wheel':return gWheel();case 'card':return gCard();case 'dice':return gDice();
+      case 'blindbox':return gBlind();case 'startrail':return gStar();case 'story':return gStory();
+      case 'task':return gTask();case 'fair':return gFair();default:return '<div class="gtit">仪式进行中...</div>';}
+  }return '';}
+
+/* WHEEL */
+function gWheel(){return `<div class="gtit">${S.result?'命运已经决定...':'命运转盘即将转动'}</div><div class="wwrap"><div class="wptr"></div><canvas id="wcv" width="520" height="520" class="wcv"></canvas></div>`;}
+function dW(cv){
+  const ctx=cv.getContext('2d');const s=260,dp=2;cv.width=s*dp;cv.height=s*dp;cv.style.width=s+'px';cv.style.height=s+'px';ctx.scale(dp,dp);
+  const cx=s/2,cy=s/2,r=s/2-4,n=WS.length,sa=360/n;
+  for(let i=0;i<n;i++){const a1=(i*sa-90)*Math.PI/180,a2=((i+1)*sa-90)*Math.PI/180;ctx.beginPath();ctx.moveTo(cx,cy);ctx.arc(cx,cy,r,a1,a2);ctx.closePath();ctx.fillStyle=WS[i].c;ctx.fill();ctx.strokeStyle='rgba(155,142,196,.3)';ctx.lineWidth=1;ctx.stroke();ctx.save();ctx.translate(cx,cy);ctx.rotate(a1+(a2-a1)/2);ctx.fillStyle='rgba(240,234,245,.85)';ctx.font='11px "Noto Sans SC",sans-serif';ctx.textAlign='center';ctx.textBaseline='middle';const ls=WS[i].t.split('\n'),lh=14,sy=r*.55-((ls.length-1)*lh)/2;ls.forEach((l,j)=>ctx.fillText(l,0,sy+j*lh));ctx.restore();}
+  ctx.beginPath();ctx.arc(cx,cy,26,0,Math.PI*2);ctx.fillStyle='rgba(21,16,32,.9)';ctx.fill();ctx.strokeStyle='rgba(155,142,196,.4)';ctx.lineWidth=2;ctx.stroke();ctx.fillStyle='rgba(212,197,169,.8)';ctx.font='12px "Noto Serif SC",serif';ctx.textAlign='center';ctx.fillText('命运',cx,cy-6);ctx.fillText('转盘',cx,cy+8);}
+function spW(cv,idx){const sa=360/WS.length;cv.style.transform=`rotate(${5*360-(idx*sa+sa/2)+(Math.random()*10-5)}deg)`;}
+
+/* CARD */
+function gCard(){const r=S.result;return `<div class="gtit">${!r?'命运正在洗牌...':r.isExempt?'撒娇豁免牌！':'翻开今晚的牌'}</div>
+<div class="fcon"><div class="finn"><div class="fface cback" style="border-radius:16px"><span style="font-size:26px;opacity:.5">🌙</span><span style="font-size:10px;color:var(--t5);opacity:.4;margin-top:6px">晚安卡</span></div>
+<div class="fface fback cfrnt" style="border-radius:16px"><span style="font-size:22px;margin-bottom:10px">${r?.isExempt?'🃏':'✨'}</span><div class="serif" style="font-size:16px;color:var(--cream);margin-bottom:6px">${r?.title||''}</div><div class="dvd"></div><p style="font-size:12px;color:var(--t3);line-height:1.6;opacity:.8">${r?.desc||''}</p><p style="font-size:9px;color:var(--t6);opacity:.3;margin-top:14px">Sampson & Sharyn</p></div></div></div>`;}
+
+/* FAIR */
+function gFair(){const h=S.rs.history,sc=h.filter(e=>e.result.closer==='sampson').length,yc=h.filter(e=>e.result.closer==='sharyn').length,tot=sc+yc||1;
+return `<div class="gtit">正在衡量每一份想念的重量...</div>
+<div class="fsts card"><div style="flex:1"><div class="fn" style="color:var(--cream)">${sc}</div><div class="fl">Sampson 收尾</div></div><div style="width:1px;height:40px;background:rgba(155,142,196,.15)"></div><div style="flex:1"><div class="fn" style="color:var(--rose)">${yc}</div><div class="fl">Sharyn 收尾</div></div></div>
+<div class="fbar"><div class="ffill" style="width:${sc/tot*100}%"></div></div><p style="font-size:10px;color:var(--t6);text-align:center">收尾次数对比</p>
+<div style="display:flex;gap:4px;justify-content:center;margin-top:14px">${[0,1,2].map(i=>`<div style="width:6px;height:6px;border-radius:50%;background:var(--gold);opacity:.5;animation:pulse .8s ease-in-out infinite ${i*.15}s"></div>`).join('')}</div>`;}
+
+/* QUIZ */
+function gQuiz(){
+  const rs=S.rs,q=rs.currentQuestion;if(!q)return '<div class="gtit">题目加载中...</div>';
+  const me=S.me,ot=or(me),ma=rs.players[me]?.answered,oa=rs.players[ot]?.answered,rv=rs.revealedAnswers;
+  if(rv)return `<div class="gtit">${rv.match?'💕 默契达成！':'答案揭晓'}</div>
+<div class="card" style="padding:16px;max-width:300px;width:100%;margin:0 auto 10px;text-align:center"><p class="serif" style="font-size:14px;color:var(--cream)">${q.text}</p></div>
+<div class="qrev"><div class="qa card-s" style="background:${rv.match?'rgba(110,231,183,.08)':'var(--glass)'}"><div class="qr">${rn(me)}（你）</div><div class="qv">${rv[me]}</div></div><div class="qa card-s" style="background:${rv.match?'rgba(110,231,183,.08)':'var(--glass)'}"><div class="qr">${rn(ot)}</div><div class="qv">${rv[ot]}</div></div></div>
+${rv.match?'<div class="qm" style="color:var(--gold)">✨ 你们的答案完全一致！</div>':'<div class="qm" style="color:var(--t4)">答案不同，但理解不需要完美</div>'}`;
+  return `<div class="gtit">${q.text}</div>
+<div class="qopts">${q.options.map(o=>`<div class="qo${S.qc===o?' sel':''}${ma?' dis':''}" onclick="${ma?'':`doAns('${o.replace(/'/g,"\\'")}')`}">${o}</div>`).join('')}</div>
+<div style="display:flex;gap:10px;justify-content:center;margin-top:14px">
+<span class="abg ${ma?'abg-y':'abg-w'}">${ma?'你已作答':'等待你选择'}</span>
+<span class="abg ${oa?'abg-y':'abg-w'}">${oa?rn(ot)+' 已作答':rn(ot)+' 思考中'}</span>
+</div>`;}
+
+/* DICE */
+function gDice(){const r=S.result,pi=r?.dicePersonIdx??0,ai=r?.diceActionIdx??0;
+return `<div class="gtit">${r?'骰子已落定':'命运骰子即将滚动...'}</div>
+<div class="darea"><div><div class="dbox card" style="border-color:rgba(212,197,169,.2)"><div class="dv">${r?DP[pi]:'?'}</div></div><div class="dlbl">谁来收尾</div></div>
+<span style="font-size:18px;color:var(--t5)">×</span>
+<div><div class="dbox card" style="border-color:rgba(155,142,196,.2)"><div class="dv" style="font-size:12px">${r?DA[ai]:'?'}</div></div><div class="dlbl">收尾方式</div></div></div>
+${r?.isReroll?'<p style="text-align:center;font-size:13px;color:var(--gold);margin-top:8px">🎲 重投一次！</p>':''}`;}
+
+/* STORY */
+function gStory(){const r=S.result;
+return `<div class="gtit">${r?'今晚的故事签':'正在抽取今晚的故事...'}</div>
+<div class="scard"><div class="sscrl card" style="${r?'animation:unfurl .8s ease forwards':'opacity:.6'}">
+<div style="text-align:center;font-size:18px;margin-bottom:8px;opacity:.4">📜</div>
+<div class="stit">${r?.title||'...'}</div><div class="dvd"></div><div class="sbod">${r?.desc||'故事即将展开...'}</div>
+${r?.extraTask?`<div style="margin-top:12px;padding:10px;border-radius:8px;background:rgba(212,197,169,.06);border:1px solid rgba(212,197,169,.1)"><p style="font-size:10px;color:var(--gold);opacity:.6;margin-bottom:3px">在那之前</p><p style="font-size:12px;color:var(--cream);opacity:.8">${r.extraTask}</p></div>`:''}
+${r?`<div class="scls">今晚由 ${rn(r.closer)} 守住最后一句晚安</div>`:''}</div></div>`;}
+
+/* TASK */
+function gTask(){const r=S.result;
+return `<div class="gtit">${r?'心动任务已揭晓':'正在抽取甜蜜任务...'}</div>
+<div class="tcard card" style="${r?'animation:pop .5s ease':''}"><div class="ti">${r?'💌':'💭'}</div><div class="tt">${r?.extraTask||'任务加载中...'}</div>
+${r?`<div class="dvd"></div><p style="font-size:13px;color:var(--t3);opacity:.8;margin-top:8px">完成后由 <span style="color:var(--cream)">${rn(r.closer)}</span> 收尾</p>`:''}</div>`;}
+
+/* BLINDBOX */
+function gBlind(){const r=S.result;
+return `<div class="gtit">${r?'盲盒已开启':'今晚的盲盒即将揭晓...'}</div>
+<div class="bwrap"><div class="bbox">🎁</div><div class="brev"><span style="font-size:22px">${r?.isExempt?'🔮':r?.isReverse?'🔄':r?.isSpecial?'💝':r?.extraMinutes?'⏰':'✨'}</span><span class="serif" style="font-size:13px;color:var(--cream)">${r?.title||''}</span><span style="font-size:10px;color:var(--t4);opacity:.7">${r?.desc||''}</span></div></div>`;}
+
+/* STARTRAIL */
+function gStar(){return `<div class="gtit">${S.result?'星轨已落定':'放出今晚的星星...'}</div>
+<div class="scnv card" id="sa" style="background:radial-gradient(circle,rgba(21,16,32,.6),rgba(10,8,16,.9))"><div class="trcen" id="sc">${S.result?rn(S.result.closer)[0]:''}</div></div>`;}
+function aStars(){const a=$('#sa');if(!a)return;for(let i=0;i<20;i++){const d=document.createElement('div');d.className='trdot';const an=Math.random()*Math.PI*2,ds=80+Math.random()*50;d.style.cssText=`left:50%;top:50%;--sx:${Math.cos(an)*ds}px;--sy:${Math.sin(an)*ds}px;--dur:${1.5+Math.random()}s;--del:${Math.random()*1.5}s`;a.appendChild(d);}}
+function rStarC(){const c=$('#sc');if(c)c.classList.add('show');}
+
+/* COUNTDOWN */
+function gCd(){
+  const rs=S.rs,me=S.me,ot=or(me),ma=rs.players[me]?.answered,oa=rs.players[ot]?.answered;
+  if(S.cdV!==null&&S.cdV>0)return `<div class="cdn" key="${S.cdV}">${S.cdV}</div><div class="cdl">准备同步...</div>
+<div style="display:flex;gap:10px;justify-content:center;margin-top:16px"><span class="abg abg-w">${rn(me)} 准备中</span><span class="abg abg-w">${rn(ot)} 准备中</span></div>`;
+  if(S.cdR||S.cdV===0)return `<div style="text-align:center"><div class="gtit" style="color:var(--gold);font-size:20px">同时按下！</div>
+${!ma?`<div class="cdp card" onclick="doCdP()">按下</div>`:`<p style="font-size:13px;color:var(--cream);margin:20px 0">已按下！等待 ${rn(ot)}...</p>`}
+<div style="display:flex;gap:10px;justify-content:center;margin-top:10px"><span class="abg ${ma?'abg-y':'abg-w'}">${ma?'你已按下':'等待你按下'}</span><span class="abg ${oa?'abg-y':'abg-w'}">${oa?rn(ot)+' 已按下':rn(ot)+' 准备中'}</span></div></div>`;
+  return '<div class="cdn">⏱️</div><div class="cdl">倒数即将开始</div>';}
+
+/* =============== RESULT =============== */
+function resC(){
+  const r=S.result;if(!r)return '';const nm=rn(r.closer),md=MODES[r.mode];
+  if(r.isExempt)return `<div class="rcard card" style="max-width:340px;width:100%;margin:0 auto"><div class="rglow"></div><div style="position:relative;z-index:1"><span style="font-size:34px;display:block;margin-bottom:10px;animation:pop .5s ease">🃏</span><h2 class="serif" style="font-size:20px;color:var(--cream);margin-bottom:8px">${r.title||'撒娇豁免牌'}</h2><p style="font-size:13px;color:var(--t3);opacity:.7;margin-bottom:16px">${r.desc||'这一次不算'}</p><button class="btn btn-p btn-sm" onclick="doRst()">使用豁免，重新决定</button></div></div>`;
+  if(r.isReroll)return `<div class="rcard card" style="max-width:340px;width:100%;margin:0 auto"><div style="position:relative;z-index:1"><span style="font-size:34px;display:block;margin-bottom:10px;animation:pop .5s ease">🎲</span><h2 class="serif" style="font-size:18px;color:var(--cream);margin-bottom:8px">重投一次！</h2><p style="font-size:13px;color:var(--t3);opacity:.7;margin-bottom:16px">命运要求再来</p><button class="btn btn-p btn-sm" onclick="doRst()">重新投掷</button></div></div>`;
+  return `<div class="rcard card" style="max-width:340px;width:100%;margin:0 auto"><div class="rglow"></div><div style="position:relative;z-index:1">
+<span class="tag" style="margin-bottom:10px;display:inline-block">${md?.n||r.mode}</span>
+<div class="rav card" style="background:var(--glass);color:${r.closer==='sampson'?'var(--cream)':'var(--rose)'}">${nm[0]}</div>
+<p class="rlbl">这一次的温柔收尾人，是</p><h2 class="rnam serif">${nm}</h2><div class="dvd"></div>
+<p class="rdsc">${r.desc||'今晚请由 '+nm+' 负责替这通电话轻轻画上句点'}</p>
+${r.extraTask?`<div class="rext card-s"><div class="el">在那之前</div><div class="ev">${r.extraTask}</div></div>`:''}
+${r.extraMinutes?`<div class="rext card-s"><div class="el">甜蜜加时</div><div class="ev">再聊 ${r.extraMinutes} 分钟后温柔收尾</div></div>`:''}
+${r.quizMatch!==undefined?`<div class="rext card-s"><div class="el">${r.quizMatch?'💕 默契达成':'答案不同'}</div><div class="ev">${r.quizQuestion||''}</div></div>`:''}
+${r.perfectSync?`<div class="rext card-s"><div class="el">✨ 完美同步</div><div class="ev">差距仅 ${r.syncDiff||0} 毫秒</div></div>`:''}
+${r.antiStreak?'<p style="font-size:10px;color:var(--gold);opacity:.5;margin-top:6px">✦ 防连挂保护已生效</p>':''}
+${r.easterEgg?`<div class="regg">${r.easterEgg.text}</div>`:''}
+</div></div>
+<div class="acts"><button class="btn btn-p" onclick="svH();this.textContent='已记下 ✓';this.disabled=true">已记下这一晚</button><button class="btn" onclick="doRst()">重新决定</button><button style="background:none;border:none;font-size:11px;color:var(--t5);padding:8px;cursor:pointer;font-family:var(--font)" onclick="S.screen='history';rdr()">查看晚安记录</button></div>`;}
+
+function svH(){const r=S.result;if(!r)return;const l=JSON.parse(localStorage.getItem('gc_h')||'[]');l.push({result:r,date:new Date().toLocaleDateString('zh-CN'),ts:Date.now()});localStorage.setItem('gc_h',JSON.stringify(l));}
+
+/* =============== SCREEN: HISTORY =============== */
+function scrHist(){
+  const sh=S.rs?.history||[];const lh=JSON.parse(localStorage.getItem('gc_h')||'[]');
+  const ts=new Set(sh.map(h=>h.ts));const all=[...sh,...lh.filter(h=>!ts.has(h.ts))].sort((a,b)=>(b.ts||b.timestamp||0)-(a.ts||a.timestamp||0));
+  const sc=all.filter(h=>h.result.closer==='sampson').length,yc=all.filter(h=>h.result.closer==='sharyn').length,tot=sc+yc||1;
+  const r7=all.slice(0,15);
+  const achs=S.rs?.achievements||[];
+  return `<div class="scr">
+<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
+<button style="background:none;border:none;font-size:12px;color:var(--t4);opacity:.6;padding:4px 8px;cursor:pointer;font-family:var(--font)" onclick="S.screen=S.rs?'room':'home';rdr()">← 返回</button>
+<h2 class="serif" style="font-size:15px;color:var(--cream)">晚安记录</h2><div style="width:40px"></div></div>
+<div class="card" style="padding:20px;margin-bottom:16px">
+<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
+<div style="text-align:center;flex:1"><p class="serif" style="font-size:28px;color:var(--cream);margin-bottom:4px">${sc}</p><p style="font-size:11px;color:var(--t5)">Sampson 收尾</p></div>
+<div style="display:flex;flex-direction:column;align-items:center;gap:2px"><div style="width:1px;height:28px;background:rgba(155,142,196,.15)"></div><span style="font-size:10px;color:var(--t6)">VS</span><div style="width:1px;height:28px;background:rgba(155,142,196,.15)"></div></div>
+<div style="text-align:center;flex:1"><p class="serif" style="font-size:28px;color:var(--rose);margin-bottom:4px">${yc}</p><p style="font-size:11px;color:var(--t5)">Sharyn 收尾</p></div></div>
+<div class="fbar"><div class="ffill" style="width:${sc/tot*100}%"></div></div>
+<p style="font-size:10px;color:var(--t6);text-align:center;margin-top:6px">${sc===yc?'想念被完美平分':sc>yc?'Sampson 承担了更多收尾':'Sharyn 承担了更多收尾'}</p></div>
+
+${achs.length?`<div style="margin-bottom:16px"><h3 class="serif" style="font-size:13px;color:var(--cream);margin-bottom:8px;padding:0 2px">成就徽章</h3>
+<div style="display:flex;flex-wrap:wrap;gap:6px">${achs.map(a=>{const ac=ACHVS[a];return ac?`<div class="bdg card-s"><span class="bdg-i">${ac.ic}</span><span><span class="bdg-n">${ac.n}</span><br><span class="bdg-d">${ac.d}</span></span></div>`:''}).join('')}</div></div>`:''}
+
+<h3 class="serif" style="font-size:13px;color:var(--cream);margin-bottom:8px;padding:0 2px">最近晚安记录</h3>
+${r7.length===0?`<div class="card-s" style="padding:32px;text-align:center"><span style="font-size:22px;opacity:.3">🌙</span><p style="font-size:12px;color:var(--t5);opacity:.5;margin-top:10px">还没有晚安记录</p></div>`
+:r7.map(e=>{const r=e.result;const md=MODES[r.mode];return `<div class="he card-s">
+<div class="hav card" style="color:${r.closer==='sampson'?'var(--cream)':'var(--rose)'}">${rn(r.closer)[0]}</div>
+<div class="hi"><div class="hn">${rn(r.closer)} 收尾</div><div class="hm"><span>${md?.n||r.mode}</span>${r.antiStreak?'<span style="color:var(--gold)">防连挂</span>':''}${r.extraMinutes?`<span>+${r.extraMinutes}min</span>`:''}</div></div>
+<span class="hd">${e.date||''}</span></div>`;}).join('')}
+<p style="text-align:center;font-size:10px;color:var(--t6);opacity:.3;margin-top:20px">每一次晚安，都被温柔记住</p>
+</div>`;}
+
+/* =============== INIT =============== */
+genStars();initSk();rdr();
+</script>
+</body>
+</html>
