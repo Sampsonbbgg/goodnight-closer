@@ -202,7 +202,7 @@ function initSk(){
   sk.on('disconnect',()=>{S.connected=false;upd();});
   sk.on('room_state',(st)=>{const op=S.rs?.phase,om=S.rs?.selectedMode;S.rs=st;if(st.phase==='result'&&st.result)S.result=st.result;const phChanged=op!==st.phase;const modeChanged=om!==st.selectedMode;if(phChanged){if(st.phase==='answering'&&st.selectedMode==='countdown')startCd();if(st.phase==='both_joined'){S.anim=false;S.starting=false;}}if(phChanged||modeChanged){if(S.anim&&st.phase==='result'){}else{rdr();}}else{upd();}});
   sk.on('game_starting',()=>{S.starting=true;S.result=null;S.anim=true;rdr();});
-  sk.on('game_result',(d)=>{S.result=d.result;S.starting=false;S.anim=true;const m=S.rs?.selectedMode;rdr();setTimeout(()=>ardr(),50);const dl=m==='wheel'?4500:m==='dice'?4500:m==='card'?2500:m==='startrail'?3000:m==='blindbox'?2500:1800;setTimeout(()=>{S.anim=false;rdr();},dl);});
+  sk.on('game_result',(d)=>{S.result=d.result;S.starting=false;S.anim=true;const m=S.rs?.selectedMode;autoSv(d.result);rdr();setTimeout(()=>ardr(),50);const dl=m==='wheel'?4500:m==='dice'?4500:m==='card'?2500:m==='startrail'?3000:m==='blindbox'?2500:1800;setTimeout(()=>{S.anim=false;rdr();},dl);});
   sk.on('game_reset',()=>{S.starting=false;S.result=null;S.anim=false;S.qc=null;S.cdR=false;clrCd();upd();});
   sk.on('answers_revealed',()=>upd());
   sk.on('player_answered',()=>upd());
@@ -492,13 +492,14 @@ ${r.easterEgg?`<div class="regg">${r.easterEgg.text}</div>`:''}
 </div></div>
 <div class="acts"><button class="btn btn-p" onclick="svH();this.textContent='已记下 ✓';this.disabled=true">已记下这一晚</button><button class="btn" onclick="doRst()">重新决定</button><button style="background:none;border:none;font-size:11px;color:var(--t5);padding:8px;cursor:pointer;font-family:var(--font)" onclick="S.screen='history';rdr()">查看晚安记录</button></div>`;}
 
-function svH(){const r=S.result;if(!r)return;const l=JSON.parse(localStorage.getItem('gc_h')||'[]');l.push({result:r,date:new Date().toLocaleDateString('zh-CN'),ts:Date.now()});localStorage.setItem('gc_h',JSON.stringify(l));}
+function autoSv(r){if(!r||!r.ts)return;const l=JSON.parse(localStorage.getItem('gc_h')||'[]');if(l.some(h=>h.result&&h.result.ts===r.ts))return;l.push({result:r,date:new Date().toLocaleDateString('zh-CN'),ts:r.ts});localStorage.setItem('gc_h',JSON.stringify(l));}
+function svH(){autoSv(S.result);}
 function delH(ts){if(!confirm('确定要删除这条晚安记录吗？'))return;const lh=JSON.parse(localStorage.getItem('gc_h')||'[]');localStorage.setItem('gc_h',JSON.stringify(lh.filter(h=>h.ts!==ts)));rdr();}
 
 /* =============== SCREEN: HISTORY =============== */
 function scrHist(){
   const sh=S.rs?.history||[];const lh=JSON.parse(localStorage.getItem('gc_h')||'[]');
-  const ts=new Set(sh.map(h=>h.ts));const all=[...sh,...lh.filter(h=>!ts.has(h.ts))].sort((a,b)=>(b.ts||b.timestamp||0)-(a.ts||a.timestamp||0));
+  const rts=new Set(sh.map(h=>h.result?.ts));const all=[...sh,...lh.filter(h=>!rts.has(h.result?.ts))].sort((a,b)=>(b.ts||b.timestamp||0)-(a.ts||a.timestamp||0));
   const sc=all.filter(h=>h.result.closer==='sampson').length,yc=all.filter(h=>h.result.closer==='sharyn').length,tot=sc+yc||1;
   const r7=all.slice(0,15);
   const achs=S.rs?.achievements||[];
