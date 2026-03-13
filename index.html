@@ -188,7 +188,7 @@ function rn(r){return r==='sampson'?'Sampson':'Sharyn'}
 function or(r){return r==='sampson'?'sharyn':'sampson'}
 
 /* =============== STATE =============== */
-const S={screen:'home',connected:false,rs:null,me:null,starting:false,result:null,anim:false,catF:'all',cdT:null,cdV:null,cdR:false,qc:null,modal:null,jid:'',loading:false,err:''};
+const S={screen:'home',connected:false,rs:null,me:null,starting:false,result:null,anim:false,catF:'all',cdT:null,cdV:null,cdR:false,qc:null,modal:null,jid:'',loading:false,err:'',gh:null};
 let sk;
 
 /* =============== DOM =============== */
@@ -198,11 +198,16 @@ function genStars(){const c=$('#stars');let h='';for(let i=0;i<60;i++){const x=M
 /* =============== SOCKET =============== */
 function initSk(){
   sk=io(location.origin,{transports:['websocket','polling'],reconnection:true,reconnectionAttempts:20,reconnectionDelay:1000,timeout:10000});
-  sk.on('connect',()=>{S.connected=true;upd();const sr=sessionStorage.getItem('gc_r'),sl=sessionStorage.getItem('gc_l');if(sr&&sl){sk.emit('join_room',{roomId:sr,role:sl},(d)=>{if(d.success&&d.state){S.rs=d.state;S.me=sl;S.screen='room';rdr();}else{sessionStorage.removeItem('gc_r');sessionStorage.removeItem('gc_l');}});}});
+  sk.on('connect',()=>{S.connected=true;upd();
+    sk.emit('get_history',(d)=>{if(d&&d.records){S.gh=d;if(S.screen==='history')rdr();}});
+    const lh=localStorage.getItem('gc_h');
+    if(lh){try{const arr=JSON.parse(lh);if(Array.isArray(arr)&&arr.length>0){sk.emit('migrate_history',{records:arr},(res)=>{if(res&&res.merged>=0)localStorage.removeItem('gc_h');});}}catch(e){}}
+    const sr=sessionStorage.getItem('gc_r'),sl=sessionStorage.getItem('gc_l');if(sr&&sl){sk.emit('join_room',{roomId:sr,role:sl},(d)=>{if(d.success&&d.state){S.rs=d.state;S.me=sl;S.screen='room';rdr();}else{sessionStorage.removeItem('gc_r');sessionStorage.removeItem('gc_l');}});}});
   sk.on('disconnect',()=>{S.connected=false;upd();});
+  sk.on('history_updated',(d)=>{if(d&&d.records){S.gh=d;if(S.screen==='history')rdr();}});
   sk.on('room_state',(st)=>{const op=S.rs?.phase,om=S.rs?.selectedMode;S.rs=st;if(st.phase==='result'&&st.result)S.result=st.result;const phChanged=op!==st.phase;const modeChanged=om!==st.selectedMode;if(phChanged){if(st.phase==='answering'&&st.selectedMode==='countdown')startCd();if(st.phase==='both_joined'){S.anim=false;S.starting=false;}}if(phChanged||modeChanged){if(S.anim&&st.phase==='result'){}else{rdr();}}else{upd();}});
   sk.on('game_starting',()=>{S.starting=true;S.result=null;S.anim=true;rdr();});
-  sk.on('game_result',(d)=>{S.result=d.result;S.starting=false;S.anim=true;const m=S.rs?.selectedMode;autoSv(d.result);rdr();setTimeout(()=>ardr(),50);const dl=m==='wheel'?4500:m==='dice'?4500:m==='card'?2500:m==='startrail'?3000:m==='blindbox'?2500:1800;setTimeout(()=>{S.anim=false;rdr();},dl);});
+  sk.on('game_result',(d)=>{S.result=d.result;S.starting=false;S.anim=true;const m=S.rs?.selectedMode;rdr();setTimeout(()=>ardr(),50);const dl=m==='wheel'?4500:m==='dice'?4500:m==='card'?2500:m==='startrail'?3000:m==='blindbox'?2500:1800;setTimeout(()=>{S.anim=false;rdr();},dl);});
   sk.on('game_reset',()=>{S.starting=false;S.result=null;S.anim=false;S.qc=null;S.cdR=false;clrCd();upd();});
   sk.on('answers_revealed',()=>upd());
   sk.on('player_answered',()=>upd());
@@ -490,23 +495,35 @@ ${r.perfectSync?`<div class="rext card-s"><div class="el">✨ 完美同步</div>
 ${r.antiStreak?'<p style="font-size:10px;color:var(--gold);opacity:.5;margin-top:6px">✦ 防连挂保护已生效</p>':''}
 ${r.easterEgg?`<div class="regg">${r.easterEgg.text}</div>`:''}
 </div></div>
-<div class="acts"><button class="btn btn-p" onclick="svH();this.textContent='已记下 ✓';this.disabled=true">已记下这一晚</button><button class="btn" onclick="doRst()">重新决定</button><button style="background:none;border:none;font-size:11px;color:var(--t5);padding:8px;cursor:pointer;font-family:var(--font)" onclick="S.screen='history';rdr()">查看晚安记录</button></div>`;}
+<div class="acts"><button class="btn" onclick="doRst()">重新决定</button><button style="background:none;border:none;font-size:11px;color:var(--t5);padding:8px;cursor:pointer;font-family:var(--font)" onclick="S.screen='history';rdr()">查看晚安记录</button></div>`;}
 
-function autoSv(r){if(!r||!r.ts)return;const l=JSON.parse(localStorage.getItem('gc_h')||'[]');if(l.some(h=>h.result&&h.result.ts===r.ts))return;l.push({result:r,date:new Date().toLocaleDateString('zh-CN'),ts:r.ts});localStorage.setItem('gc_h',JSON.stringify(l));}
-function svH(){autoSv(S.result);}
-function delH(ts){if(!confirm('确定要删除这条晚安记录吗？'))return;const lh=JSON.parse(localStorage.getItem('gc_h')||'[]');localStorage.setItem('gc_h',JSON.stringify(lh.filter(h=>h.ts!==ts)));rdr();}
+function svH(){}
+function delH(ts){if(!confirm('确定要删除这条晚安记录吗？'))return;sk.emit('delete_history',{ts},(res)=>{if(!res?.success)alert('删除失败');});}
+function exportCsv(){
+  const records=S.gh?.records||[];
+  if(!records.length){alert('暂无记录可导出');return;}
+  const header=['日期','收尾人','模式','描述','额外任务','加时(分钟)','防连挂'];
+  const rows=records.map(e=>{const r=e.result||{};const md=MODES[r.mode];return [e.date||'',rn(r.closer),md?.n||r.mode||'',csvEsc(r.desc||''),csvEsc(r.extraTask||''),r.extraMinutes||'',r.antiStreak?'是':'否'];});
+  const bom='\uFEFF';
+  const csv=bom+header.join(',')+'\n'+rows.map(r=>r.join(',')).join('\n');
+  const blob=new Blob([csv],{type:'text/csv;charset=utf-8'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');a.href=url;a.download='晚安记录_'+new Date().toLocaleDateString('zh-CN').replace(/\//g,'-')+'.csv';
+  document.body.appendChild(a);a.click();document.body.removeChild(a);URL.revokeObjectURL(url);
+}
+function csvEsc(s){if(!s)return '';s=String(s);if(s.includes(',')||s.includes('"')||s.includes('\n'))return '"'+s.replace(/"/g,'""')+'"';return s;}
 
 /* =============== SCREEN: HISTORY =============== */
 function scrHist(){
-  const sh=S.rs?.history||[];const lh=JSON.parse(localStorage.getItem('gc_h')||'[]');
-  const rts=new Set(sh.map(h=>h.result?.ts));const all=[...sh,...lh.filter(h=>!rts.has(h.result?.ts))].sort((a,b)=>(b.ts||b.timestamp||0)-(a.ts||a.timestamp||0));
-  const sc=all.filter(h=>h.result.closer==='sampson').length,yc=all.filter(h=>h.result.closer==='sharyn').length,tot=sc+yc||1;
-  const r7=all.slice(0,15);
-  const achs=S.rs?.achievements||[];
+  const all=S.gh?.records||[];
+  const sc=all.filter(h=>h.result?.closer==='sampson').length,yc=all.filter(h=>h.result?.closer==='sharyn').length,tot=sc+yc||1;
+  const r7=all.slice(0,30);
+  const achs=S.gh?.achievements||[];
   return `<div class="scr">
 <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
 <button style="background:none;border:none;font-size:12px;color:var(--t4);opacity:.6;padding:4px 8px;cursor:pointer;font-family:var(--font)" onclick="S.screen=S.rs?'room':'home';rdr()">← 返回</button>
-<h2 class="serif" style="font-size:15px;color:var(--cream)">晚安记录</h2><div style="width:40px"></div></div>
+<h2 class="serif" style="font-size:15px;color:var(--cream)">晚安记录</h2>
+<button style="background:none;border:none;font-size:12px;color:var(--t4);opacity:.6;padding:4px 8px;cursor:pointer;font-family:var(--font)" onclick="exportCsv()">导出</button></div>
 <div class="card" style="padding:20px;margin-bottom:16px">
 <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
 <div style="text-align:center;flex:1"><p class="serif" style="font-size:28px;color:var(--cream);margin-bottom:4px">${sc}</p><p style="font-size:11px;color:var(--t5)">Sampson 收尾</p></div>
@@ -519,12 +536,12 @@ ${achs.length?`<div style="margin-bottom:16px"><h3 class="serif" style="font-siz
 <div style="display:flex;flex-wrap:wrap;gap:6px">${achs.map(a=>{const ac=ACHVS[a];return ac?`<div class="bdg card-s"><span class="bdg-i">${ac.ic}</span><span><span class="bdg-n">${ac.n}</span><br><span class="bdg-d">${ac.d}</span></span></div>`:''}).join('')}</div></div>`:''}
 
 <h3 class="serif" style="font-size:13px;color:var(--cream);margin-bottom:8px;padding:0 2px">最近晚安记录</h3>
-${r7.length===0?`<div class="card-s" style="padding:32px;text-align:center"><span style="font-size:22px;opacity:.3">🌙</span><p style="font-size:12px;color:var(--t5);opacity:.5;margin-top:10px">还没有晚安记录</p></div>`
-:r7.map(e=>{const r=e.result;const md=MODES[r.mode];return `<div class="he card-s" style="position:relative">
+${r7.length===0?`<div class="card-s" style="padding:32px;text-align:center"><span style="font-size:22px;opacity:.3">🌙</span><p style="font-size:12px;color:var(--t5);opacity:.5;margin-top:10px">还没有晚安记录</p>${!S.connected?'<p style="font-size:10px;color:var(--rose);opacity:.5;margin-top:6px">未连接服务器</p>':''}</div>`
+:r7.map(e=>{const r=e.result;if(!r)return '';const md=MODES[r.mode];return `<div class="he card-s" style="position:relative">
 <div class="hav card" style="color:${r.closer==='sampson'?'var(--cream)':'var(--rose)'}">${rn(r.closer)[0]}</div>
 <div class="hi"><div class="hn">${rn(r.closer)} 收尾</div><div class="hm"><span>${md?.n||r.mode}</span>${r.antiStreak?'<span style="color:var(--gold)">防连挂</span>':''}${r.extraMinutes?`<span>+${r.extraMinutes}min</span>`:''}</div></div>
 <span class="hd">${e.date||''}</span>
-<button onclick="delH(${e.ts})" style="position:absolute;top:8px;right:8px;background:none;border:none;font-size:14px;color:var(--t6);opacity:.4;cursor:pointer;padding:4px 6px;line-height:1;font-family:var(--font)">×</button>
+<button onclick="delH(${e.ts||r.ts})" style="position:absolute;top:8px;right:8px;background:none;border:none;font-size:14px;color:var(--t6);opacity:.4;cursor:pointer;padding:4px 6px;line-height:1;font-family:var(--font)">×</button>
 </div>`;}).join('')}
 <p style="text-align:center;font-size:10px;color:var(--t6);opacity:.3;margin-top:20px">每一次晚安，都被温柔记住</p>
 </div>`;}

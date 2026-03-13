@@ -2,12 +2,59 @@ const express = require('express');
 const { createServer } = require('http');
 const { Server } = require('socket.io');
 const path = require('path');
+const fs = require('fs');
 
 const app = express();
 const httpServer = createServer(app);
 const io = new Server(httpServer, { cors: { origin: '*' } });
 
 app.use(express.static(path.join(__dirname)));
+
+// ============================================================
+//  GLOBAL HISTORY PERSISTENCE
+// ============================================================
+
+const HIST_DIR = path.join(__dirname, 'data');
+const HIST_FILE = path.join(HIST_DIR, 'history.json');
+
+let globalHistory = { records: [], stats: { totalGames: 0, modesUsed: [] }, achievements: [] };
+
+function loadHistory() {
+  try {
+    if (!fs.existsSync(HIST_DIR)) fs.mkdirSync(HIST_DIR, { recursive: true });
+    if (fs.existsSync(HIST_FILE)) {
+      const raw = fs.readFileSync(HIST_FILE, 'utf8');
+      const data = JSON.parse(raw);
+      if (data && Array.isArray(data.records)) {
+        globalHistory = data;
+        if (!globalHistory.stats) globalHistory.stats = { totalGames: 0, modesUsed: [] };
+        if (!globalHistory.achievements) globalHistory.achievements = [];
+        console.log(`[历史] 已加载 ${globalHistory.records.length} 条记录`);
+      }
+    }
+  } catch (e) {
+    console.error('[历史] 加载失败，使用空数据:', e.message);
+  }
+}
+
+let saveTimer = null;
+function saveHistory() {
+  if (saveTimer) clearTimeout(saveTimer);
+  saveTimer = setTimeout(() => {
+    try {
+      if (!fs.existsSync(HIST_DIR)) fs.mkdirSync(HIST_DIR, { recursive: true });
+      fs.writeFileSync(HIST_FILE, JSON.stringify(globalHistory, null, 2), 'utf8');
+    } catch (e) {
+      console.error('[历史] 保存失败:', e.message);
+    }
+  }, 500);
+}
+
+function broadcastHistory() {
+  io.emit('history_updated', { records: globalHistory.records, stats: globalHistory.stats, achievements: globalHistory.achievements });
+}
+
+loadHistory();
 
 // ============================================================
 //  GAME DATA
@@ -119,7 +166,7 @@ function createRoom() {
     selectedMode: null,
     modeSelectedBy: null,
     result: null,
-    history: [],
+    history: globalHistory.records,
     createdAt: Date.now(),
     // Interactive mode state
     currentQuestion: null,
@@ -129,8 +176,8 @@ function createRoom() {
     countdownTarget: null,
     countdownPresses: { sampson:null, sharyn:null },
     // Stats & systems
-    stats: { totalGames:0, modesUsed:[] },
-    achievements: [],
+    stats: globalHistory.stats,
+    achievements: globalHistory.achievements,
     exemptions: { sampson:1, sharyn:1 },
   };
   rooms.set(id, room);
@@ -500,6 +547,9 @@ function finalizeResult(room, result) {
   if(!room.stats.modesUsed.includes(result.mode)) room.stats.modesUsed.push(result.mode);
   // Check achievements
   checkAchievements(room, result);
+  // Persist and broadcast
+  saveHistory();
+  broadcastHistory();
 }
 
 function checkAchievements(room, result) {
@@ -674,6 +724,52 @@ io.on('connection', (socket) => {
     const f = findBySocket(socket.id);
     if(!f) return;
     socket.emit('room_state', toClient(f.room));
+  });
+
+  // ============ HISTORY SYNC EVENTS ============
+
+  socket.on('get_history', (cb) => {
+    if(typeof cb !== 'function') return;
+    cb({ records: globalHistory.records, stats: globalHistory.stats, achievements: globalHistory.achievements });
+  });
+
+  socket.on('delete_history', (data, cb) => {
+    if(typeof cb !== 'function') return;
+    if(!data?.ts) return cb({ success: false });
+    const before = globalHistory.records.length;
+    globalHistory.records = globalHistory.records.filter(h => h.ts !== data.ts && h.result?.ts !== data.ts);
+    const deleted = before - globalHistory.records.length;
+    if(deleted > 0) {
+      // Recalculate stats
+      globalHistory.stats.totalGames = globalHistory.records.length;
+      globalHistory.stats.modesUsed = [...new Set(globalHistory.records.map(h => h.result?.mode).filter(Boolean))];
+      saveHistory();
+      broadcastHistory();
+    }
+    cb({ success: deleted > 0 });
+  });
+
+  socket.on('migrate_history', (data, cb) => {
+    if(typeof cb !== 'function' || !Array.isArray(data?.records)) return cb({ merged: 0 });
+    let merged = 0;
+    data.records.forEach(record => {
+      const ts = record.ts || record.result?.ts;
+      if(!ts) return;
+      const exists = globalHistory.records.some(h => (h.ts || h.result?.ts) === ts);
+      if(!exists) {
+        globalHistory.records.push(record);
+        merged++;
+      }
+    });
+    if(merged > 0) {
+      globalHistory.records.sort((a, b) => (b.ts || 0) - (a.ts || 0));
+      // Recalculate stats
+      globalHistory.stats.totalGames = globalHistory.records.length;
+      globalHistory.stats.modesUsed = [...new Set(globalHistory.records.map(h => h.result?.mode).filter(Boolean))];
+      saveHistory();
+      broadcastHistory();
+    }
+    cb({ merged });
   });
 
   socket.on('disconnect', (reason) => {
